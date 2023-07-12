@@ -1,0 +1,135 @@
+import tkinter as tk
+from tkinter import filedialog
+from PIL import Image, ImageTk, ImageDraw
+import os
+import random
+
+
+
+def select_input_directory():
+    input_dir = filedialog.askdirectory()
+    input_entry.delete(0, tk.END)
+    input_entry.insert(tk.END, input_dir)
+    load_random_image()
+
+def select_output_directory():
+    output_dir = filedialog.askdirectory()
+    output_entry.delete(0, tk.END)
+    output_entry.insert(tk.END, output_dir)
+     
+
+def clear_text():
+    input_text.delete(1.0, tk.END)
+
+def load_random_image():
+    input_dir = input_entry.get()
+    if input_dir:
+        images = [f for f in os.listdir(input_dir) if f.endswith(".jpg") or f.endswith(".png")]
+        if images:
+            random_image = random.choice(images)
+            image_path = os.path.join(input_dir, random_image)
+            image = Image.open(image_path)
+            image.thumbnail((300, 300))
+            photo = ImageTk.PhotoImage(image)
+            image_label.config(image=photo)
+            image_label.image = photo
+
+def choose_image():
+    input_dir = input_entry.get()
+    if input_dir:
+        image_path = filedialog.askopenfilename(initialdir=input_dir, title="Chọn ảnh")
+        if image_path:
+            image = Image.open(image_path)
+            image.thumbnail((300, 300))
+            photo = ImageTk.PhotoImage(image)
+            image_label.config(image=photo)
+            image_label.image = photo
+
+# Hàm tạo hình chữ nhật được bo tròn các góc
+
+def rectangle_rounded():
+
+    # Kích thước của hình chữ nhật
+    width = 800
+    height = 140
+    
+
+    # Tạo ảnh mới với kích thước và chế độ 'RGBA' (bao gồm alpha channel)
+    image = Image.new("RGBA", (width, height))
+    
+
+    # Tạo đối tượng vẽ trên ảnh
+    draw = ImageDraw.Draw(image)
+
+    # Vẽ hình chữ nhật với các góc được bo tròn
+    corner_radius = 80
+    draw.rounded_rectangle((0, 0, width, height), corner_radius, fill=(255, 255, 255, 255))
+    draw.ellipse((6.243, 6.243, 133.757, 133.757), fill = 'blue', outline ='blue')
+
+
+    image.save("binhluan.png")
+    image.show()
+
+
+    
+
+
+
+# Tạo cửa sổ chính
+window = tk.Tk()
+
+# Thiết lập tiêu đề cửa sổ
+window.title("Ứng dụng với giao diện Tk")
+
+# Tạo frame chứa hình ảnh
+image_frame = tk.Frame(window)
+image_frame.pack(pady=10)
+
+# Tạo label để hiển thị hình ảnh
+image_label = tk.Label(image_frame)
+image_label.pack()
+
+# Tạo entry cho đường dẫn đầu vào
+input_label = tk.Label(window, text="Link Input:")
+input_label.pack()
+input_entry = tk.Entry(window, width=50)
+input_entry.pack()
+
+# Tạo nút bấm để chọn thư mục đầu vào
+input_button = tk.Button(window, text="Chọn đường dẫn đầu vào", command=select_input_directory)
+input_button.pack()
+
+# Tạo entry cho đường dẫn đầu ra
+output_label = tk.Label(window, text="Link Output:")
+output_label.pack()
+output_entry = tk.Entry(window, width=50)
+output_entry.pack()
+
+# Tạo nút bấm để chọn thư mục đầu ra
+output_button = tk.Button(window, text="Chọn đường dẫn đầu ra", command=select_output_directory)
+output_button.pack()
+
+# Tạo entry cho nội dung
+text_label = tk.Label(window, text="Nội dung:")
+text_label.pack()
+input_text = tk.Text(window, width=50, height=10)
+input_text.pack()
+
+# Tạo nút bấm để xoá nội dung
+clear_button = tk.Button(window, text="Xoá nội dung", command=clear_text)
+clear_button.pack()
+
+# Tạo nút bấm để đổi ảnh ngẫu nhiên
+random_image_button = tk.Button(window, text="Đổi ảnh ngẫu nhiên", command=load_random_image)
+random_image_button.pack()
+
+# Tạo nút bấm để tự chọn ảnh
+choose_image_button = tk.Button(window, text="Tự chọn ảnh", command=choose_image)
+choose_image_button.pack()
+
+# Tạo nút bấm để tạo ảnh và sao chép nội dung vào clipboard
+generate_button = tk.Button(window, text="Tạo ảnh ", command=rectangle_rounded)
+generate_button.pack()
+
+# Chạy ứng dụng
+window.mainloop()
